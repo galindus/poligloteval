@@ -1,7 +1,11 @@
-import sklearn.metrics
-
 import re
 from collections import Counter
+import nltk
+from nltk.translate.bleu_score import sentence_bleu
+from nltk.tokenize import word_tokenize
+nltk.download('punkt')
+import math
+
 
 def normalize_answer(s):
     """Lower text and remove punctuation, articles and extra whitespace."""
@@ -14,7 +18,7 @@ def normalize_answer(s):
 
     def remove_punct(text):
         return re.sub(r"[^\wàéíòúüçÀÉÍÒÚÜÇ\s]", '', text)
-        
+
     return white_space_fix(remove_articles(remove_punct(s.lower())))
 
 def f1_score(prediction, ground_truth):
@@ -38,21 +42,24 @@ def mean(arr):
     return sum(arr) / len(arr)
 
 
-def bleu(items):
-    """The Bilingual Evaluation Understudy Score, or BLEU for short, is a metric
-    for evaluating a generated sentence to a reference sentence. It counts matching
-    n-grams in the candidate translation to n-grams in the reference text, where
-    1-gram or unigram would be each token and a bigram comparison would be each
-    word pair. The comparison is made regardless of word order
-    Source: https://machinelearningmastery.com/calculate-bleu-score-for-text-python/
-    Paper: https://www.aclweb.org/anthology/P02-1040/
-
-    Higher is better
+def calculate_bleu_score(prediction, ground_truth):
     """
-    refs = list(zip(*items))[0]
-    preds = list(zip(*items))[1]
-    refs, preds = _sacreformat(refs, preds)
-    return sacrebleu.corpus_bleu(preds, refs).score
+    Calculate BLEU score for a prediction against a ground truth.
+
+    Args:
+    prediction (str): The predicted text.
+    ground_truth (str): The reference text (ground truth).
+
+    Returns:
+    float: The BLEU score.
+    """
+    # Tokenizing the texts into words
+    prediction_tokens = word_tokenize(prediction)
+    ground_truth_tokens = [word_tokenize(ground_truth)]  # List of lists for multiple references support
+
+    # Calculating BLEU score
+    bleu_score = sentence_bleu(ground_truth_tokens, prediction_tokens)
+    return bleu_score
 
 
 def perplexity(items):

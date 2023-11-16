@@ -5,3 +5,5 @@ einops
 pyonmttok
 ctranslate2
 scikit-learn
+nltk
+tqdm
