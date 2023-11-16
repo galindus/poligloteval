@@ -1,0 +1,7 @@
+transformers
+datasets
+accelerate
+einops
+pyonmttok
+ctranslate2
+scikit-learn
