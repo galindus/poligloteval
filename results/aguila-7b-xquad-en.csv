@@ -1,0 +1,107 @@
+context,prompt,answer,prediction,prob,f1,bleu
+"""The Islamic State"", formerly known as the ""Islamic State of Iraq and the Levant"" and before that as the ""Islamic State of Iraq"", (and called the acronym Daesh by its many detractors), is a Wahhabi/Salafi jihadist extremist militant group which is led by and mainly composed of Sunni Arabs from Iraq and Syria. In 2014, the group proclaimed itself a caliphate, with religious, political and military authority over all Muslims worldwide. As of March 2015[update], it had control over territory occupied by ten million people in Iraq and Syria, and has nominal control over small areas of Libya, Nigeria and Afghanistan. (While a self-described state, it lacks international recognition.) The group also operates or has affiliates in other parts of the world, including North Africa and South Asia.","""The Islamic State"", formerly known as the ""Islamic State of Iraq and the Levant"" and before that as the ""Islamic State of Iraq"", (and called the acronym Daesh by its many detractors), is a Wahhabi/Salafi jihadist extremist militant group which is led by and mainly composed of Sunni Arabs from Iraq and Syria. In 2014, the group proclaimed itself a caliphate, with religious, political and military authority over all Muslims worldwide. As of March 2015[update], it had control over territory occupied by ten million people in Iraq and Syria, and has nominal control over small areas of Libya, Nigeria and Afghanistan. (While a self-described state, it lacks international recognition.) The group also operates or has affiliates in other parts of the world, including North Africa and South Asia.
+----
+Question: Who leads The Islamic State?
+Response: Sunni Arabs
+----
+Question: What does the Islamic State lack from the international community?
+Response: recognition
+----
+Question: What did the Islamic State proclaim itself in 2014?
+Response: a caliphate
+----
+Question: What type of group is The Islamic State?
+Response:",Wahhabi/Salafi jihadist extremist militant,a jihadist group,0.69921875,0.3333333333333333,9.918892480173173e-232
+"""The Islamic State"", formerly known as the ""Islamic State of Iraq and the Levant"" and before that as the ""Islamic State of Iraq"", (and called the acronym Daesh by its many detractors), is a Wahhabi/Salafi jihadist extremist militant group which is led by and mainly composed of Sunni Arabs from Iraq and Syria. In 2014, the group proclaimed itself a caliphate, with religious, political and military authority over all Muslims worldwide. As of March 2015[update], it had control over territory occupied by ten million people in Iraq and Syria, and has nominal control over small areas of Libya, Nigeria and Afghanistan. (While a self-described state, it lacks international recognition.) The group also operates or has affiliates in other parts of the world, including North Africa and South Asia.","""The Islamic State"", formerly known as the ""Islamic State of Iraq and the Levant"" and before that as the ""Islamic State of Iraq"", (and called the acronym Daesh by its many detractors), is a Wahhabi/Salafi jihadist extremist militant group which is led by and mainly composed of Sunni Arabs from Iraq and Syria. In 2014, the group proclaimed itself a caliphate, with religious, political and military authority over all Muslims worldwide. As of March 2015[update], it had control over territory occupied by ten million people in Iraq and Syria, and has nominal control over small areas of Libya, Nigeria and Afghanistan. (While a self-described state, it lacks international recognition.) The group also operates or has affiliates in other parts of the world, including North Africa and South Asia.
+----
+Question: What does the Islamic State lack from the international community?
+Response: recognition
+----
+Question: What did the Islamic State proclaim itself in 2014?
+Response: a caliphate
+----
+Question: Who leads The Islamic State?
+Response:",Sunni Arabs,Abu Bakr al-Baghdadi,0.68359375,0.0,0.0
+"""The Islamic State"", formerly known as the ""Islamic State of Iraq and the Levant"" and before that as the ""Islamic State of Iraq"", (and called the acronym Daesh by its many detractors), is a Wahhabi/Salafi jihadist extremist militant group which is led by and mainly composed of Sunni Arabs from Iraq and Syria. In 2014, the group proclaimed itself a caliphate, with religious, political and military authority over all Muslims worldwide. As of March 2015[update], it had control over territory occupied by ten million people in Iraq and Syria, and has nominal control over small areas of Libya, Nigeria and Afghanistan. (While a self-described state, it lacks international recognition.) The group also operates or has affiliates in other parts of the world, including North Africa and South Asia.","""The Islamic State"", formerly known as the ""Islamic State of Iraq and the Levant"" and before that as the ""Islamic State of Iraq"", (and called the acronym Daesh by its many detractors), is a Wahhabi/Salafi jihadist extremist militant group which is led by and mainly composed of Sunni Arabs from Iraq and Syria. In 2014, the group proclaimed itself a caliphate, with religious, political and military authority over all Muslims worldwide. As of March 2015[update], it had control over territory occupied by ten million people in Iraq and Syria, and has nominal control over small areas of Libya, Nigeria and Afghanistan. (While a self-described state, it lacks international recognition.) The group also operates or has affiliates in other parts of the world, including North Africa and South Asia.
+----
+Question: What type of group is The Islamic State?
+Response: Wahhabi/Salafi jihadist extremist militant
+----
+Question: What does the Islamic State lack from the international community?
+Response: recognition
+----
+Question: How many people did the Islamic State control the territory of as of March 2015?
+Response:",ten million,10 million people,0.70703125,0.4,1.384292958842266e-231
+"""The Islamic State"", formerly known as the ""Islamic State of Iraq and the Levant"" and before that as the ""Islamic State of Iraq"", (and called the acronym Daesh by its many detractors), is a Wahhabi/Salafi jihadist extremist militant group which is led by and mainly composed of Sunni Arabs from Iraq and Syria. In 2014, the group proclaimed itself a caliphate, with religious, political and military authority over all Muslims worldwide. As of March 2015[update], it had control over territory occupied by ten million people in Iraq and Syria, and has nominal control over small areas of Libya, Nigeria and Afghanistan. (While a self-described state, it lacks international recognition.) The group also operates or has affiliates in other parts of the world, including North Africa and South Asia.","""The Islamic State"", formerly known as the ""Islamic State of Iraq and the Levant"" and before that as the ""Islamic State of Iraq"", (and called the acronym Daesh by its many detractors), is a Wahhabi/Salafi jihadist extremist militant group which is led by and mainly composed of Sunni Arabs from Iraq and Syria. In 2014, the group proclaimed itself a caliphate, with religious, political and military authority over all Muslims worldwide. As of March 2015[update], it had control over territory occupied by ten million people in Iraq and Syria, and has nominal control over small areas of Libya, Nigeria and Afghanistan. (While a self-described state, it lacks international recognition.) The group also operates or has affiliates in other parts of the world, including North Africa and South Asia.
+----
+Question: Who leads The Islamic State?
+Response: Sunni Arabs
+----
+Question: How many people did the Islamic State control the territory of as of March 2015?
+Response: ten million
+----
+Question: What does the Islamic State lack from the international community?
+Response:",recognition,international recognition,0.6796875,0.6666666666666666,1.5319719891192393e-231
+"""The Islamic State"", formerly known as the ""Islamic State of Iraq and the Levant"" and before that as the ""Islamic State of Iraq"", (and called the acronym Daesh by its many detractors), is a Wahhabi/Salafi jihadist extremist militant group which is led by and mainly composed of Sunni Arabs from Iraq and Syria. In 2014, the group proclaimed itself a caliphate, with religious, political and military authority over all Muslims worldwide. As of March 2015[update], it had control over territory occupied by ten million people in Iraq and Syria, and has nominal control over small areas of Libya, Nigeria and Afghanistan. (While a self-described state, it lacks international recognition.) The group also operates or has affiliates in other parts of the world, including North Africa and South Asia.","""The Islamic State"", formerly known as the ""Islamic State of Iraq and the Levant"" and before that as the ""Islamic State of Iraq"", (and called the acronym Daesh by its many detractors), is a Wahhabi/Salafi jihadist extremist militant group which is led by and mainly composed of Sunni Arabs from Iraq and Syria. In 2014, the group proclaimed itself a caliphate, with religious, political and military authority over all Muslims worldwide. As of March 2015[update], it had control over territory occupied by ten million people in Iraq and Syria, and has nominal control over small areas of Libya, Nigeria and Afghanistan. (While a self-described state, it lacks international recognition.) The group also operates or has affiliates in other parts of the world, including North Africa and South Asia.
+----
+Question: How many people did the Islamic State control the territory of as of March 2015?
+Response: ten million
+----
+Question: What does the Islamic State lack from the international community?
+Response: recognition
+----
+Question: What did the Islamic State proclaim itself in 2014?
+Response:",a caliphate,a caliphate,0.76171875,1.0,1.491668146240062e-154
+"In Europe, the North American theater of the Seven Years' War usually is not given a separate name. The entire international conflict is known as the Seven Years' War. ""Seven Years"" refers to events in Europe, from the official declaration of war in 1756 to the signing of the peace treaty in 1763. These dates do not correspond with the fighting on mainland North America, where the fighting between the two colonial powers was largely concluded in six years, from the Battle of Jumonville Glen in 1754 to the capture of Montreal in 1760.","In Europe, the North American theater of the Seven Years' War usually is not given a separate name. The entire international conflict is known as the Seven Years' War. ""Seven Years"" refers to events in Europe, from the official declaration of war in 1756 to the signing of the peace treaty in 1763. These dates do not correspond with the fighting on mainland North America, where the fighting between the two colonial powers was largely concluded in six years, from the Battle of Jumonville Glen in 1754 to the capture of Montreal in 1760.
+----
+Question: How long did the fighting last in Seven Years War?
+Response: six years
+----
+Question: When was Montreal captured?
+Response: 1760
+----
+Question: What was first battle in 1754?
+Response: Battle of Jumonville Glen
+----
+Question: What time framd does the Seven Years War cover?
+Response:",1756 to the signing of the peace treaty in 1763,1754 to 1763,0.609375,0.36363636363636365,1.5963632367165956e-232
+"In Europe, the North American theater of the Seven Years' War usually is not given a separate name. The entire international conflict is known as the Seven Years' War. ""Seven Years"" refers to events in Europe, from the official declaration of war in 1756 to the signing of the peace treaty in 1763. These dates do not correspond with the fighting on mainland North America, where the fighting between the two colonial powers was largely concluded in six years, from the Battle of Jumonville Glen in 1754 to the capture of Montreal in 1760.","In Europe, the North American theater of the Seven Years' War usually is not given a separate name. The entire international conflict is known as the Seven Years' War. ""Seven Years"" refers to events in Europe, from the official declaration of war in 1756 to the signing of the peace treaty in 1763. These dates do not correspond with the fighting on mainland North America, where the fighting between the two colonial powers was largely concluded in six years, from the Battle of Jumonville Glen in 1754 to the capture of Montreal in 1760.
+----
+Question: What time framd does the Seven Years War cover?
+Response: 1756 to the signing of the peace treaty in 1763
+----
+Question: When was Montreal captured?
+Response: 1760
+----
+Question: How long did the fighting last in Seven Years War?
+Response:",six years,1754 to 1760,0.64453125,0.0,0.0
+"In Europe, the North American theater of the Seven Years' War usually is not given a separate name. The entire international conflict is known as the Seven Years' War. ""Seven Years"" refers to events in Europe, from the official declaration of war in 1756 to the signing of the peace treaty in 1763. These dates do not correspond with the fighting on mainland North America, where the fighting between the two colonial powers was largely concluded in six years, from the Battle of Jumonville Glen in 1754 to the capture of Montreal in 1760.","In Europe, the North American theater of the Seven Years' War usually is not given a separate name. The entire international conflict is known as the Seven Years' War. ""Seven Years"" refers to events in Europe, from the official declaration of war in 1756 to the signing of the peace treaty in 1763. These dates do not correspond with the fighting on mainland North America, where the fighting between the two colonial powers was largely concluded in six years, from the Battle of Jumonville Glen in 1754 to the capture of Montreal in 1760.
+----
+Question: What time framd does the Seven Years War cover?
+Response: 1756 to the signing of the peace treaty in 1763
+----
+Question: How long did the fighting last in Seven Years War?
+Response: six years
+----
+Question: When was Montreal captured?
+Response:",1760,1760,0.7890625,1.0,1.821831989445342e-231
+"In Europe, the North American theater of the Seven Years' War usually is not given a separate name. The entire international conflict is known as the Seven Years' War. ""Seven Years"" refers to events in Europe, from the official declaration of war in 1756 to the signing of the peace treaty in 1763. These dates do not correspond with the fighting on mainland North America, where the fighting between the two colonial powers was largely concluded in six years, from the Battle of Jumonville Glen in 1754 to the capture of Montreal in 1760.","In Europe, the North American theater of the Seven Years' War usually is not given a separate name. The entire international conflict is known as the Seven Years' War. ""Seven Years"" refers to events in Europe, from the official declaration of war in 1756 to the signing of the peace treaty in 1763. These dates do not correspond with the fighting on mainland North America, where the fighting between the two colonial powers was largely concluded in six years, from the Battle of Jumonville Glen in 1754 to the capture of Montreal in 1760.
+----
+Question: What time framd does the Seven Years War cover?
+Response: 1756 to the signing of the peace treaty in 1763
+----
+Question: How long did the fighting last in Seven Years War?
+Response: six years
+----
+Question: What was first battle in 1754?
+Response:",Battle of Jumonville Glen,Battle of Jumonville Glen,0.75,1.0,1.0
+"Because of their soft, gelatinous bodies, ctenophores are extremely rare as fossils, and fossils that have been interpreted as ctenophores have been found only in lagerstätten, places where the environment was exceptionally suited to preservation of soft tissue. Until the mid-1990s only two specimens good enough for analysis were known, both members of the crown group, from the early Devonian (Emsian) period. Three additional putative species were then found in the Burgess Shale and other Canadian rocks of similar age, about 505 million years ago in the mid-Cambrian period. All three apparently lacked tentacles but had between 24 and 80 comb rows, far more than the 8 typical of living species. They also appear to have had internal organ-like structures unlike anything found in living ctenophores. One of the fossil species first reported in 1996 had a large mouth, apparently surrounded by a folded edge that may have been muscular. Evidence from China a year later suggests that such ctenophores were widespread in the Cambrian, but perhaps very different from modern species – for example one fossil's comb-rows were mounted on prominent vanes. The Ediacaran Eoandromeda could putatively represent a comb jelly.","Because of their soft, gelatinous bodies, ctenophores are extremely rare as fossils, and fossils that have been interpreted as ctenophores have been found only in lagerstätten, places where the environment was exceptionally suited to preservation of soft tissue. Until the mid-1990s only two specimens good enough for analysis were known, both members of the crown group, from the early Devonian (Emsian) period. Three additional putative species were then found in the Burgess Shale and other Canadian rocks of similar age, about 505 million years ago in the mid-Cambrian period. All three apparently lacked tentacles but had between 24 and 80 comb rows, far more than the 8 typical of living species. They also appear to have had internal organ-like structures unlike anything found in living ctenophores. One of the fossil species first reported in 1996 had a large mouth, apparently surrounded by a folded edge that may have been muscular. Evidence from China a year later suggests that such ctenophores were widespread in the Cambrian, but perhaps very different from modern species – for example one fossil's comb-rows were mounted on prominent vanes. The Ediacaran Eoandromeda could putatively represent a comb jelly.
+----
+Question: Ediacaran eoandromeda can be regarded to represent what?
+Response: comb jelly.
+----
+Question: What did the  fossils found in the Burgess Shale lack?
+Response: tentacles
+----
+Question: Why are ctenophores extremely rare as fossils?
+Response:","their soft, gelatinous bodies",because they are soft and gelatinous,0.734375,0.4,1.384292958842266e-231
