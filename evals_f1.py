@@ -16,7 +16,7 @@ from huggingface_hub import snapshot_download
 
 
 # %%
-model_id = "projecte-aina/aguila-7b"
+model_id =  "tiiuae/falcon-7b" # "projecte-aina/aguila-7b"
 model_name = model_id.split('/')[1]
 tokenizer = AutoTokenizer.from_pretrained(model_id, padding_side='left')
 model = AutoModelForCausalLM.from_pretrained(model_id,
@@ -130,58 +130,12 @@ results_en.to_csv(f"results/{model_name}-xquad-en.csv", index=False)
 # # Eval catalanqa
 
 # %%
-print("Computing catalanqa")
-catalanqa = load_dataset("data", data_files="catalanqa.csv", split="train")
-catalanqa_en = catalanqa.map(translate)
+# print("Computing catalanqa")
+# catalanqa = load_dataset("data", data_files="catalanqa.csv", split="train")
+# catalanqa_en = catalanqa.map(translate)
 
-results_catalanqa_ca = catalanqa.map(compute_metrics)
-results_catalanqa_ca.to_csv(f"results/{model_name}-catalanqa-ca.csv", index=False)
+# results_catalanqa_ca = catalanqa.map(compute_metrics)
+# results_catalanqa_ca.to_csv(f"results/{model_name}-catalanqa-ca.csv", index=False)
 
-results_calalanqa_en = catalanqa_en.map(compute_metrics)
-results_calalanqa_en.to_csv(f"results/{model_name}-catalanqa-en.csv", index=False)
-
-# Test falcon-7b
-
-# %%
-del model
-del tokenizer
-torch.cuda.empty_cache()
-
-model_id = "tiiuae/falcon-7b"
-model_name = model_id.split('/')[1]
-tokenizer = AutoTokenizer.from_pretrained(model_id)
-model = AutoModelForCausalLM.from_pretrained(model_id,
-                                             torch_dtype=torch.bfloat16,
-                                             trust_remote_code=True,
-                                             device_map="auto")
-
-
-# %% [markdown]
-# # Eval catalanqa
-
-# %%
-print("Falcon - Computing catalanqa")
-results_catalanqa_ca = catalanqa.map(compute_metrics)
-results_calalanqa_en = catalanqa_en.map(compute_metrics)
-
-from pathlib import Path
-Path("results").mkdir(parents=True, exist_ok=True)
-
-results_catalanqa_ca.to_csv(f"results/{model_name}-catalanqa-ca.csv", index=False)
-results_calalanqa_en.to_csv(f"results/{model_name}-catalanqa-en.csv", index=False)
-
-
-# %% [markdown]
-# # Eval xquad
-#
-
-# %%
-print("Falcon - Computing xquad")
-results_ca = xquad_ca.map(compute_metrics)
-results_en = xquad_en.map(compute_metrics)
-
-from pathlib import Path
-Path("results").mkdir(parents=True, exist_ok=True)
-
-results_ca.to_csv(f"results/{model_name}-xquad-ca.csv", index=False)
-results_en.to_csv(f"results/{model_name}-xquad-en.csv", index=False)
+# results_calalanqa_en = catalanqa_en.map(compute_metrics)
+# results_calalanqa_en.to_csv(f"results/{model_name}-catalanqa-en.csv", index=False)
