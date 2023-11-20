@@ -37,76 +37,31 @@ import time
 # %%
 def run_inference(txt, num_tokens=20, stop_text='\n'):
     # Tokenize the input text
-    tokens = tokenizer(txt, return_tensors="pt", padding=True).to(model.device)
-    batch_size, input_length = tokens['input_ids'].shape
+    tokens = tokenizer(txt, return_tensors="pt").to(model.device)['input_ids']
+    input_len = tokens.shape[1]
+    # Calculate the total length of the output (input length + number of tokens to generate)
 
-    # Create an index tensor and concatenate it with the input tokens
-    index_tensor = torch.arange(batch_size, device=model.device).unsqueeze(1)
-    input_ids = torch.cat([index_tensor, tokens['input_ids']], dim=1)
+    generated_text = None
 
-    # Adjust attention_mask to ignore the index token
-    attention_mask = torch.cat([torch.ones((batch_size, 1), device=model.device), tokens['attention_mask']], dim=1)
-
-    # Prepare the stop tokens, if provided
     if stop_text:
-        stop_tokens = tokenizer(stop_text, add_special_tokens=False, return_tensors="pt").to(model.device)['input_ids'][0] if stop_text else None
-        stop_tokens_len = len(stop_tokens) if stop_text else 0
-
-    # Initialize tensor to store results
-    result_output = torch.full((batch_size, num_tokens), -100, dtype=input_ids.dtype, device=model.device)
+        stop_tokens = tokenizer(stop_text, return_tensors="pt").to(model.device)["input_ids"]
+        stop_tokens_len = stop_tokens.shape[1]
 
     with torch.no_grad():
-        output_ids = input_ids.clone()
-        num_sequences_completed = 0
+        # Generate tokens
+        for _ in range(num_tokens):
+            tokens = model.generate(tokens, do_sample=True, top_k=1, eos_token_id=tokenizer.eos_token_id, max_new_tokens=1)
 
-        for token_idx in range(num_tokens):
-            output_ids = model.generate(output_ids, use_cache=True, do_sample=True, top_k=1, eos_token_id=tokenizer.eos_token_id, max_new_tokens=1)
+            # If a stop text is found, truncate the output at its first occurrence
+            if stop_text is not None:
+                if (tokens[0][-stop_tokens_len:] == stop_tokens).all():
+                    tokens[0][-stop_tokens_len:] = tokenizer.eos_token_id
+                    break
 
-            if stop_text:
-                stop_tensor = torch.eq(output_ids[:, -stop_tokens_len:], stop_tokens)
-                stop_tensor = stop_tensor.all(dim=-1).int().unsqueeze(1)
-
-                # Identify finished sequences
-                finished_mask = (stop_tensor == 1).squeeze()
-                if finished_mask.any():
-                    original_indices = output_ids[:, 0].long()
-                    seq_len = output_ids.shape[1] - 1
-                    if finished_mask.ndim == 0:
-                        finished_mask = finished_mask.unsqueeze(0)
-
-                    result_output[original_indices[finished_mask], :token_idx+1] = output_ids[finished_mask, 1+input_length:]
-
-                    # Update input_ids and output_ids to remove finished sequences
-                    ongoing_mask = ~finished_mask
-                    input_ids = input_ids[ongoing_mask]
-                    output_ids = output_ids[ongoing_mask]
-
-                    # Update attention_mask
-                    attention_mask = attention_mask[ongoing_mask]
-
-                    # Update the count of completed sequences
-                    num_sequences_completed += finished_mask.sum().item()
-
-            # Break the loop if all sequences are completed
-            if num_sequences_completed >= batch_size:
-                break
-
-        if output_ids.shape[0] > 0:
-            remaining_indices = output_ids[:, 0].long()
-            seq_len = output_ids.shape[1] - 1
-            result_output[remaining_indices, :num_tokens] = output_ids[:, 1+input_length:]
-
-        # Post-process the results
-        # Replace -100 with tokenizer.eos_token_id for correct decoding
-        result_output[result_output == -100] = tokenizer.eos_token_id
-        generated_texts = tokenizer.batch_decode(result_output, skip_special_tokens=True)
-
-    return generated_texts
-
-texts = ["Once upon a time"]
-generated_texts = run_inference(texts, num_tokens=20, stop_text="\n")
-generated_texts
-
+        generated_only = tokenizer.decode(tokens[0][input_len:], skip_special_tokens=True)
+        return generated_only
+txt = '"The Islamic State", formerly known as the "Islamic State of Iraq and the Levant" and before that as the "Islamic State of Iraq", (and called the acronym Daesh by its many detractors), is a Wahhabi/Salafi jihadist extremist militant group which is led by and mainly composed of Sunni Arabs from Iraq and Syria. In 2014, the group proclaimed itself a caliphate, with religious, political and military authority over all Muslims worldwide. As of March 2015[update], it had control over territory occupied by ten million people in Iraq and Syria, and has nominal control over small areas of Libya, Nigeria and Afghanistan. (While a self-described state, it lacks international recognition.) The group also operates or has affiliates in other parts of the world, including North Africa and South Asia.\n----\nQuestion: Who leads The Islamic State?\nResponse: Sunni Arabs\n----\nQuestion: What does the Islamic State lack from the international community?\nResponse: recognition\n----\nQuestion: What did the Islamic State proclaim itself in 2014?\nResponse: a caliphate\n----\nQuestion: What type of group is The Islamic State?\nResponse:'
+run_inference(txt, stop_text="\n")
 # %%
 
 def translate(sample):
@@ -130,13 +85,14 @@ def translate(sample):
 
 def compute_metrics(sample):
     try:
-        predictions = run_inference(sample['prompt'])
+        prediction = run_inference(sample['prompt'])
     except Exception as e:
         print(e)
         raise
-    scores = [f1_score(p, a) for p, a in zip(predictions, sample['answer'])]
 
-    return {"f1": scores, "predictions": predictions}
+    score = f1_score(prediction, sample['answer'])
+
+    return {"f1": score, "predictions": prediction}
 
 
 # %%
@@ -155,14 +111,13 @@ def replace_none(row):
             row[key] = "None"
     return row
 # %%
-xquad_ca = load_dataset("data", data_files="xquad_ca.csv", split="train[:100]").map(replace_none)
-xquad_en = load_dataset("data", data_files="xquad_en.csv", split="train[:100]").map(replace_none)
+xquad_ca = load_dataset("data", data_files="xquad_ca.csv", split="train").map(replace_none)
+xquad_en = load_dataset("data", data_files="xquad_en.csv", split="train").map(replace_none)
 
 # Apply the function to the dataset
-results_en = xquad_en.map(compute_metrics, batch_size=, batched=True)
-
-# %%
-results_ca = xquad_ca.map(compute_metrics, batch_size=2, batched=True)
+print("Computing xquad")
+results_en = xquad_en.map(compute_metrics)
+results_ca = xquad_ca.map(compute_metrics)
 
 from pathlib import Path
 Path("results").mkdir(parents=True, exist_ok=True)
@@ -175,13 +130,14 @@ results_en.to_csv(f"results/{model_name}-xquad-en.csv", index=False)
 # # Eval catalanqa
 
 # %%
-catalanqa = load_dataset("data", data_files="catalanqa.csv", split="train[:10]")
+print("Computing catalanqa")
+catalanqa = load_dataset("data", data_files="catalanqa.csv", split="train")
 catalanqa_en = catalanqa.map(translate)
 
-results_catalanqa_ca = catalanqa.map(compute_metrics, batch_size=1, batched=True)
+results_catalanqa_ca = catalanqa.map(compute_metrics)
 results_catalanqa_ca.to_csv(f"results/{model_name}-catalanqa-ca.csv", index=False)
 
-results_calalanqa_en = catalanqa_en.map(compute_metrics, batch_size=1, batched=True)
+results_calalanqa_en = catalanqa_en.map(compute_metrics)
 results_calalanqa_en.to_csv(f"results/{model_name}-catalanqa-en.csv", index=False)
 
 # Test falcon-7b
@@ -204,8 +160,9 @@ model = AutoModelForCausalLM.from_pretrained(model_id,
 # # Eval catalanqa
 
 # %%
-results_catalanqa_ca = catalanqa.map(compute_metrics, batch_size=1, batched=True)
-results_calalanqa_en = catalanqa_en.map(compute_metrics, batch_size=1, batched=True)
+print("Falcon - Computing catalanqa")
+results_catalanqa_ca = catalanqa.map(compute_metrics)
+results_calalanqa_en = catalanqa_en.map(compute_metrics)
 
 from pathlib import Path
 Path("results").mkdir(parents=True, exist_ok=True)
@@ -219,17 +176,12 @@ results_calalanqa_en.to_csv(f"results/{model_name}-catalanqa-en.csv", index=Fals
 #
 
 # %%
-results_ca = xquad_ca.map(compute_metrics, batch_size=1, batched=True)
-results_en = xquad_en.map(compute_metrics, batch_size=1, batched=True)
+print("Falcon - Computing xquad")
+results_ca = xquad_ca.map(compute_metrics)
+results_en = xquad_en.map(compute_metrics)
 
 from pathlib import Path
 Path("results").mkdir(parents=True, exist_ok=True)
 
 results_ca.to_csv(f"results/{model_name}-xquad-ca.csv", index=False)
 results_en.to_csv(f"results/{model_name}-xquad-en.csv", index=False)
-
-# %%
-import pandas as pd
-df = pd.read_csv("data/xquad_en.csv")
-df[df.isnull().any(axis=1)]
-# %%
