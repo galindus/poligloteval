@@ -10,7 +10,6 @@ import math
 def normalize_answer(s):
     """Lower text and remove punctuation, articles and extra whitespace."""
     def remove_articles(text):
-        eng_regex = r'\b(a|an|the)\b'
         return re.sub(r'\b(a|an|the)\b', ' ', text)
 
     def white_space_fix(text):
@@ -40,27 +39,6 @@ def f1_score(prediction, ground_truth):
 # Taken from llm-evaluation-harness
 def mean(arr):
     return sum(arr) / len(arr)
-
-
-def calculate_bleu_score(prediction, ground_truth):
-    """
-    Calculate BLEU score for a prediction against a ground truth.
-
-    Args:
-    prediction (str): The predicted text.
-    ground_truth (str): The reference text (ground truth).
-
-    Returns:
-    float: The BLEU score.
-    """
-    # Tokenizing the texts into words
-    prediction_tokens = word_tokenize(prediction)
-    ground_truth_tokens = [word_tokenize(ground_truth)]  # List of lists for multiple references support
-
-    # Calculating BLEU score
-    bleu_score = sentence_bleu(ground_truth_tokens, prediction_tokens)
-    return bleu_score
-
 
 def perplexity(items):
     return math.exp(-mean(items))
