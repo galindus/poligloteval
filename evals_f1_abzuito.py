@@ -17,7 +17,8 @@ from huggingface_hub import snapshot_download
 
 # %%
 model_id =  "tiiuae/falcon-7b"
-model_name = model_id.split('/')[1]
+#model_name = model_id.split('/')[1]
+model_name = "abzuito-7b"
 tokenizer = AutoTokenizer.from_pretrained(model_id, padding_side='left')
 model = AutoModelForCausalLM.from_pretrained(model_id,
                                              torch_dtype=torch.bfloat16,
@@ -41,32 +42,46 @@ en_ca_model = ctranslate2.Translator(en_ca_model_folder, device="cuda")
 def translate_to_english(txt):
     lines = [l for l in txt.split("\n") if l.strip() != ""]
 
-    toks, _ = tokenizer_ca_en.tokenize_batch(lines)
-    translated = ca_en_model.translate_batch(toks, max_input_length=2048, max_decoding_length=2048)
+    lines_chunks = []
+    for line in lines:
+        lines_chunks.append(line.split("."))
+
     ts = []
-    for t in translated:
-        t_str = tokenizer_ca_en.detokenize(t.hypotheses[0])
-        # That is a bug on the translation outputing twice the translation.
-        if len(txt.split(" ")) == 1 and len(t_str.split(" ")) == 2:
-            t_str = t_str.split(" ")[0]
-        ts.append(t_str)
+    for i, line_chunk in enumerate(lines_chunks):
+        toks, _ = tokenizer_ca_en.tokenize_batch(line_chunk)
+        translated = ca_en_model.translate_batch(toks)
+        ts.append([])
+        for t in translated:
+            t_str = tokenizer_ca_en.detokenize(t.hypotheses[0])
+            # That is a bug on the translation outputing twice the translation.
+            if len(txt.split(" ")) == 1 and len(t_str.split(" ")) == 2:
+                t_str = t_str.split(" ")[0]
+            ts[i].append(t_str)
+        ts[i] = ". ".join(ts[i])
 
     return "\n".join(ts)
 
 def translate_to_catalan(txt):
     lines = [l for l in txt.split("\n") if l.strip() != ""]
 
-    toks, _ = tokenizer_en_ca.tokenize_batch(lines)
-    translated = en_ca_model.translate_batch(toks)
-    ts = []
-    for t in translated:
-        t_str = tokenizer_en_ca.detokenize(t.hypotheses[0])
-        # That is a bug on the translation outputing twice the translation.
-        if len(txt.split(" ")) == 1 and len(t_str.split(" ")) == 2:
-            t_str = t_str.split(" ")[0]
-        ts.append(t_str)
+    lines_chunks = []
+    for line in lines:
+        lines_chunks.append(line.split("."))
 
-    return "\n".join(ts)
+    ts = []
+    for i, line_chunk in enumerate(lines_chunks):
+        toks, _ = tokenizer_en_ca.tokenize_batch(line_chunk)
+        translated = en_ca_model.translate_batch(toks)
+        ts.append([])
+        for t in translated:
+            t_str = tokenizer_en_ca.detokenize(t.hypotheses[0])
+            # That is a bug on the translation outputing twice the translation.
+            if len(txt.split(" ")) == 1 and len(t_str.split(" ")) == 2:
+                t_str = t_str.split(" ")[0]
+            ts[i].append(t_str)
+        ts[i] = ". ".join(ts[i])
+
+    return "\n".join(ts).replace("Resposta:", "")
 # %%
 def _run_llm(txt, num_tokens=20, stop_text='\n'):
     # Tokenize the input text
@@ -88,7 +103,8 @@ def _run_llm(txt, num_tokens=20, stop_text='\n'):
                     tokens[0][-stop_tokens_len:] = tokenizer.eos_token_id
                     break
 
-        generated_only = tokenizer.decode(tokens[0][input_len:], skip_special_tokens=True)
+        #generated_only = tokenizer.decode(tokens[0][input_len:], skip_special_tokens=True)
+        generated_only = tokenizer.decode(tokens[0][input_len-2:], skip_special_tokens=True)
         return generated_only
 
 def run_inference(txt, num_tokens=20, stop_text='\n'):
@@ -126,20 +142,39 @@ def replace_none(row):
         if row[key] is None:
             row[key] = "None"
     return row
+
+
+# %%
+example = """Al budisme tibetà, als mestres de Dharma al Tibet se’ls coneix amb el nom de lama. Un lama que, a través de phowa i siddhi, ha decidit conscientment renéixer, sovint moltes vegades, per continuar el seu vot de Bodhisattva, s’anomena tulku.
+----
+Pregunta: Quin nom rep el mestre de budisme tibetà?
+Resposta: lama
+----
+Pregunta: Quantes vegades ha acceptat un lama renéixer?
+Resposta: moltes vegades
+----
+Pregunta: Quin nom rep el vot de Bodhisattva?
+Resposta:"""
+example_en = translate_to_english(example)
+response_en = _run_llm(example_en, num_tokens=20, stop_text='\n')
+translate_to_catalan(response_en)
+#run_inference(example)
+
+
 # %%
 xquad_ca = load_dataset("data", data_files="xquad_ca.csv", split="train").map(replace_none)
-xquad_en = load_dataset("data", data_files="xquad_en.csv", split="train").map(replace_none)
+#xquad_en = load_dataset("data", data_files="xquad_en.csv", split="train[:200]").map(replace_none)
 
 # Apply the function to the dataset
 print("Computing xquad")
-results_en = xquad_en.map(compute_metrics)
 results_ca = xquad_ca.map(compute_metrics)
+#results_en = xquad_en.map(compute_metrics)
 
 from pathlib import Path
 Path("results").mkdir(parents=True, exist_ok=True)
 
 results_ca.to_csv(f"results/{model_name}-xquad-ca.csv", index=False)
-results_en.to_csv(f"results/{model_name}-xquad-en.csv", index=False)
+#results_en.to_csv(f"results/{model_name}-xquad-en.csv", index=False)
 
 
 # %% [markdown]
@@ -155,3 +190,6 @@ results_en.to_csv(f"results/{model_name}-xquad-en.csv", index=False)
 
 # results_calalanqa_en = catalanqa_en.map(compute_metrics)
 # results_calalanqa_en.to_csv(f"results/{model_name}-catalanqa-en.csv", index=False)
+
+
+# %%
