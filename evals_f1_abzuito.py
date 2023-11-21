@@ -23,6 +23,7 @@ model = AutoModelForCausalLM.from_pretrained(model_id,
                                              torch_dtype=torch.bfloat16,
                                              trust_remote_code=True,
                                              device_map="auto")
+model.config.pad_token_id = tokenizer.eos_token_id
 
 # %%
 print("Loading translator Models...")
@@ -36,13 +37,12 @@ tokenizer_en_ca = pyonmttok.Tokenizer(
     mode="none", sp_model_path=en_ca_model_folder + "/spm.model"
 )
 en_ca_model = ctranslate2.Translator(en_ca_model_folder, device="cuda")
-
 # %%
 def translate_to_english(txt):
     lines = [l for l in txt.split("\n") if l.strip() != ""]
 
     toks, _ = tokenizer_ca_en.tokenize_batch(lines)
-    translated = ca_en_model.translate_batch(toks)
+    translated = ca_en_model.translate_batch(toks, max_input_length=2048, max_decoding_length=2048)
     ts = []
     for t in translated:
         t_str = tokenizer_ca_en.detokenize(t.hypotheses[0])
@@ -67,11 +67,8 @@ def translate_to_catalan(txt):
         ts.append(t_str)
 
     return "\n".join(ts)
-
-def run_inference(txt, num_tokens=20, stop_text='\n'):
-    # Translate the text
-    txt = translate_to_english(txt)
-
+# %%
+def _run_llm(txt, num_tokens=20, stop_text='\n'):
     # Tokenize the input text
     tokens = tokenizer(txt, return_tensors="pt").to(model.device)['input_ids']
     input_len = tokens.shape[1]
@@ -92,15 +89,16 @@ def run_inference(txt, num_tokens=20, stop_text='\n'):
                     break
 
         generated_only = tokenizer.decode(tokens[0][input_len:], skip_special_tokens=True)
+        return generated_only
 
-        return translate_to_catalan(generated_only)
+def run_inference(txt, num_tokens=20, stop_text='\n'):
+    # Translate the text
+    txt = translate_to_english(txt)
+    response_en = _run_llm(txt, num_tokens, stop_text)
+    return translate_to_catalan(response_en)
 
-txt = '"The Islamic State", formerly known as the "Islamic State of Iraq and the Levant" and before that as the "Islamic State of Iraq", (and called the acronym Daesh by its many detractors), is a Wahhabi/Salafi jihadist extremist militant group which is led by and mainly composed of Sunni Arabs from Iraq and Syria. In 2014, the group proclaimed itself a caliphate, with religious, political and military authority over all Muslims worldwide. As of March 2015[update], it had control over territory occupied by ten million people in Iraq and Syria, and has nominal control over small areas of Libya, Nigeria and Afghanistan. (While a self-described state, it lacks international recognition.) The group also operates or has affiliates in other parts of the world, including North Africa and South Asia.\n----\nQuestion: Who leads The Islamic State?\nResponse: Sunni Arabs\n----\nQuestion: What does the Islamic State lack from the international community?\nResponse: recognition\n----\nQuestion: What did the Islamic State proclaim itself in 2014?\nResponse: a caliphate\n----\nQuestion: What type of group is The Islamic State?\nResponse:'
-run_inference(txt, stop_text="\n")
+
 # %%
-
-
-
 def compute_metrics(sample):
     try:
         prediction = run_inference(sample['prompt'])
