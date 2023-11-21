@@ -75,12 +75,14 @@ def translate_to_catalan(txt):
             ts[i].append(t_str)
         ts[i] = ". ".join(ts[i])
 
-    return "\n".join(ts).replace("Resposta:", "")
+    return "\n".join(ts)
 # %%
 def _run_llm(txt, num_tokens=20, stop_text='\n'):
     # Tokenize the input text
+    keep_input = txt.split("\n")[-1]
     tokens = tokenizer(txt, return_tensors="pt").to(model.device)['input_ids']
     input_len = tokens.shape[1]
+
     # Calculate the total length of the output (input length + number of tokens to generate)
     if stop_text:
         stop_tokens = tokenizer(stop_text, return_tensors="pt").to(model.device)["input_ids"]
@@ -97,18 +99,19 @@ def _run_llm(txt, num_tokens=20, stop_text='\n'):
                     tokens[0][-stop_tokens_len:] = tokenizer.eos_token_id
                     break
 
-        #generated_only = tokenizer.decode(tokens[0][input_len:], skip_special_tokens=True)
-        #generated_only = tokenizer.decode(tokens[0][input_len-2:], skip_special_tokens=True)
-        everything = tokenizer.decode(tokens[0], skip_special_tokens=True)
-        return everything
+        generated_only = tokenizer.decode(tokens[0][input_len:], skip_special_tokens=True)
 
-def run_inference(txt, num_tokens=20, stop_text='\n'):
+        # Return from the last line
+        return keep_input + generated_only
+
+def run_inference(prompt, num_tokens=20, stop_text='\n'):
     # Translate the text
-    txt = translate_to_english(txt)
-    txt_ca = translate_to_catalan(txt)
-    prompt_with_response_en = _run_llm(txt, num_tokens, stop_text)
-    full_response_ca = translate_to_catalan(prompt_with_response_en)
-    return txt_ca.replace(full_response_ca, "")
+    prompt = translate_to_english(prompt)
+    last_line = prompt.split("\n")[-1]
+    last_line = translate_to_catalan(last_line)
+    output_with_last_line = _run_llm(prompt, num_tokens, stop_text)
+    output_with_last_line = translate_to_catalan(output_with_last_line)
+    return output_with_last_line.replace(last_line, "")
 
 
 # %%
@@ -120,7 +123,6 @@ def compute_metrics(sample):
         raise
 
     score = f1_score(prediction, sample['answer'])
-
     return {"f1": score, "predictions": prediction}
 
 
@@ -142,26 +144,6 @@ def replace_none(row):
 
 
 # %%
-example = """Al llarg de la seva existència, Varsòvia ha estat una ciutat multicultural. Segons el cens del 1901, de 711.988 habitants, el 56,2 % eren catòlics, el 35,7 % jueus, el 5 % cristians ortodoxos grecs i el 2,8 % protestants. Vuit anys després, el 1909, hi havia 281.754 jueus (36,9 %), 18.189 protestants (2,4 %) i 2.818 mariavites (0,4 %). Això va provocar que es construïssin centenars de llocs de culte religiós a totes les parts de la ciutat. La majoria d’ells es van destruir després de la insurrecció de Varsòvia del 1944. Després de la guerra, les noves autoritats comunistes de Polònia van apocar la construcció d’esglésies i només se’n va construir un petit nombre.
-----
-Pregunta: Dels habitants de Varsòvia l’any 1901, quin percentatge era catòlic?
-Resposta: 56,2 %
-----
-Pregunta: Quin percentatge de la població de Varsòvia era protestant l’any 1901?
-Resposta: 2,8 %
-----
-Pregunta: Quan es van destruir la majoria dels llocs de culte religiós a Varsòvia?
-Resposta: 1944
-----
-Pregunta: Quina era la població de Varsòvia l’any 1901?
-Resposta:"""
-example_en = translate_to_english(example)
-response_en = _run_llm(example_en, num_tokens=20, stop_text='\n')
-translate_to_catalan(response_en)
-#run_inference(example)
-
-
-# %%
 xquad_ca = load_dataset("data", data_files="xquad_ca.csv", split="train").map(replace_none)
 #xquad_en = load_dataset("data", data_files="xquad_en.csv", split="train[:200]").map(replace_none)
 
@@ -170,26 +152,8 @@ print("Computing xquad")
 results_ca = xquad_ca.map(compute_metrics)
 #results_en = xquad_en.map(compute_metrics)
 
-from pathlib import Path
-Path("results").mkdir(parents=True, exist_ok=True)
+# from pathlib import Path
+# Path("results").mkdir(parents=True, exist_ok=True)
 
 results_ca.to_csv(f"results/{model_name}-xquad-ca.csv", index=False)
 #results_en.to_csv(f"results/{model_name}-xquad-en.csv", index=False)
-
-
-# %% [markdown]
-# # Eval catalanqa
-
-# %%
-# print("Computing catalanqa")
-# catalanqa = load_dataset("data", data_files="catalanqa.csv", split="train")
-# catalanqa_en = catalanqa.map(translate)
-
-# results_catalanqa_ca = catalanqa.map(compute_metrics)
-# results_catalanqa_ca.to_csv(f"results/{model_name}-catalanqa-ca.csv", index=False)
-
-# results_calalanqa_en = catalanqa_en.map(compute_metrics)
-# results_calalanqa_en.to_csv(f"results/{model_name}-catalanqa-en.csv", index=False)
-
-
-# %%
