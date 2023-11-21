@@ -17,7 +17,6 @@ from huggingface_hub import snapshot_download
 
 # %%
 model_id =  "tiiuae/falcon-7b"
-#model_name = model_id.split('/')[1]
 model_name = "abzuito-7b"
 tokenizer = AutoTokenizer.from_pretrained(model_id, padding_side='left')
 model = AutoModelForCausalLM.from_pretrained(model_id,
