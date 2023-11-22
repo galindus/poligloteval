@@ -7,3 +7,9 @@ ctranslate2
 scikit-learn
 nltk
 tqdm
+sentencepiece
+protobuf
+ctransformers[cuda]
+bitsandbytes
+accelerate
+optimum
